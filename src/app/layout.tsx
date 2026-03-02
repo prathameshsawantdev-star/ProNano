@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -42,6 +43,7 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange
         >
+          <ConvexClientProvider>
            <header className="flex justify-end items-center p-4 gap-4 h-16">
               {/* Show the sign-in and sign-up buttons when the user is signed out */}
               <SignedOut>
@@ -57,7 +59,8 @@ export default function RootLayout({
                 <UserButton />
               </SignedIn>
             </header>
-          {children}
+            {children}
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>
