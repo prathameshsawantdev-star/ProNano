@@ -26,7 +26,7 @@ export const get = query({
     args: {},
     handler: async (ctx) => {
         const identity = await verifyAuth(ctx);
-       return await ctx.db.query("projects").withIndex("by_owner", (q) => q.eq("ownerId", identity.subject)).collect();
+       return await ctx.db.query("projects").withIndex("by_owner", (q) => q.eq("ownerId", identity.subject)).order("desc").collect();
     }
 })
 
@@ -36,6 +36,6 @@ export const getPartial = query({
     },
     handler: async (ctx, args) => {
         const identity = await verifyAuth(ctx);
-       return await ctx.db.query("projects").withIndex("by_owner", (q) => q.eq("ownerId", identity.subject)).take(args.limit);
+       return await ctx.db.query("projects").withIndex("by_owner", (q) => q.eq("ownerId", identity.subject)).order("desc").take(args.limit);
     }
 })
