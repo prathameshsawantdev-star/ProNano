@@ -21,7 +21,6 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
         >
          <Authenticated>
              {children}
-             <SignOutButton />
          </Authenticated>
          <Unauthenticated>
            <UnauthenticatedView />

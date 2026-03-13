@@ -8,6 +8,9 @@ import { cn } from '@/lib/utils'
 import { Poppins } from 'next/font/google'
 import { UserButton } from '@clerk/nextjs'
 import { useProject, useRenameProject } from '../hooks/use-project'
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip'
+import { CloudCheckIcon, Loader2Icon } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
 
 const font = Poppins({
     subsets: ["latin"],
@@ -44,7 +47,8 @@ const Navbar = ({ projectId }: { projectId: Id<"projects">}) => {
     }
   }
   return (
-    <nav     className='p-2 flex justify-between items-center gap-x-2 bg-sidebar border-b'>
+    <TooltipProvider>
+        <nav     className='p-2 flex justify-between items-center gap-x-2 bg-sidebar border-b'>
         <div className='flex justify-center gap-x-2'>
             <Breadcrumb>
                 <BreadcrumbList className="gap-0!">
@@ -90,11 +94,37 @@ const Navbar = ({ projectId }: { projectId: Id<"projects">}) => {
                 </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
+                 {project && project.importStatus === "importing" ? (
+                <Tooltip>
+                    <TooltipTrigger className='flex items-center' asChild>
+                        <Loader2Icon className="text-muted-foreground size-4 animate-spin" />
+                    </TooltipTrigger>
+                    <TooltipContent>Loading...</TooltipContent>
+                </Tooltip>
+            ):(
+                 (project && project.updatedAt && (
+                    <Tooltip>
+                    <TooltipTrigger className='h-full flex items-center' asChild>
+                        <CloudCheckIcon className="text-muted-foreground size-4" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        Saved{" "}
+                        {formatDistanceToNow(
+                            project!.updatedAt,
+                            {
+                                addSuffix: true
+                            }
+                        )}
+                    </TooltipContent>
+                </Tooltip>
+                 ))
+            )}
         </div>
         <div className="flex items-center">
             <UserButton />
         </div>
     </nav>
+    </TooltipProvider>
   )
 }
 
