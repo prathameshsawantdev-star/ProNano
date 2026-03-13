@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
+import { Id } from "../../../../convex/_generated/dataModel";
 
 export const useProjects = () => {
     return useQuery(api.projects.get);
@@ -13,4 +14,12 @@ export const useProjectsPartial = ({ limit }: { limit?: number }) => {
 
 export const useProjectsCreate = () => {
     return useMutation(api.projects.create)
+}
+
+export const useProject = ({ projectId }: { projectId: Id<"projects"> }) => {
+    return useQuery(api.projects.getById, { id: projectId });
+}
+
+export const useRenameProject = ({ projectId }: { projectId: Id<"projects"> }) => {
+    return useMutation(api.projects.rename)
 }
