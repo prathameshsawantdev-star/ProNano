@@ -17,7 +17,7 @@ const timeStampFormat = (timestamp: number) => {
     })
 }
 
-const getProjectIcon = (project: Doc<"projects">) => {
+export const getProjectIcon = (project: Doc<"projects">) => {
         switch(project.importStatus) {
             case "completed": 
                 return <FaGithub className='size-3.5 text-muted-foreground' />
@@ -55,6 +55,7 @@ const ProjectList = ({ onViewAllProjects }: ProjectListViewProps) => {
                         Recent projects
                     </span>
                     <button 
+                     onClick={onViewAllProjects}
                      className='flex items-center gap-2  text-xs text-muted-foreground hover:text-foreground transition-colors'
                     >
                         <span>View all</span>
