@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import LoadingRow from './loading-row'
 import CreateInput from './create-input'
 import RenameInput from './rename-input'
+import { useEditor } from '@/features/editor/hooks/use-editor'
 
 const Tree = ({
     item,
@@ -21,6 +22,8 @@ const Tree = ({
   const [isOpen, setIsOpen] = useState(false)
   const [isRenaming, setIsRenaming] = useState(false)
   const [creating, setIsCreating] = useState<"file" | "folder" | null>(null)
+
+  const { openFile, closeFile, activeTabId } = useEditor(projectId)
 
   const createFile = useCreateFile();
   const createFolder = useCreateFolder();
@@ -46,7 +49,7 @@ const Tree = ({
 
     if(item.type === "file") {
       const filename = item.name 
-
+      const isActive = activeTabId === item._id; // you can use this info to highlight actve file in file explorer
        if (isRenaming){
         return (
           <RenameInput
@@ -59,13 +62,15 @@ const Tree = ({
           />
         )
       }
-      return <TreeContextMenuWrapper item={item} level={level} isActive={false} onClick={() => {}} onDoubleClick={() => setIsRenaming(true)} 
+      return <TreeContextMenuWrapper item={item} level={level} isActive={isActive} onClick={() => openFile(item._id, { pinned: false })} onDoubleClick={() => openFile(item._id, { pinned: true })} 
       onRename={ () => setIsRenaming(true)}
       onDelete={() => {
+        closeFile(item._id)
         deleteFile({ 
           id: item._id
         })
       }}
+      
     >
       <FileIcon fileName={filename} autoAssign className='size-4' />
       <span className='text-sm truncate'>{filename}</span>
