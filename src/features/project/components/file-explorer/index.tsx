@@ -3,10 +3,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { ChevronRightIcon, CopyMinusIcon, FilePlusCornerIcon, FolderPlusIcon } from 'lucide-react'
 import React, { useState } from 'react'
-import { Id } from '../../../../convex/_generated/dataModel'
-import { useProject } from '../hooks/use-project'
 import { Button } from '@/components/ui/button'
-import { useCreateFile, useCreateFolder } from '../hooks/use-files'
+import CreateInput from './create-input'
+import { Id } from '../../../../../convex/_generated/dataModel'
+import { useProject } from '../../hooks/use-project'
+import { useCreateFile, useCreateFolder } from '../../hooks/use-files'
 
 const FileExplorer = ({ projectId }: { projectId: Id<"projects">}) => {
   const [isActive, setIsActive] = useState(false);
@@ -19,6 +20,7 @@ const FileExplorer = ({ projectId }: { projectId: Id<"projects">}) => {
   const createFolder = useCreateFolder();
 
   const handleCreate = (name: string) => {
+      setCreating(null)
     if(creating === "file") {
         createFile({
             projectId: projectId, 
@@ -34,7 +36,7 @@ const FileExplorer = ({ projectId }: { projectId: Id<"projects">}) => {
         })
     }
 
-    setCreating(null)
+  
   } 
   return (
     <div className='h-full bg-sidebar'>
@@ -58,7 +60,7 @@ const FileExplorer = ({ projectId }: { projectId: Id<"projects">}) => {
                     e.stopPropagation()
                     e.preventDefault()
                     setIsActive(true)
-                    // set isCreating to true 
+                    setCreating("file")
                    }}
                    variant="highlight"
                    size="icon-xs-custom"
@@ -70,7 +72,7 @@ const FileExplorer = ({ projectId }: { projectId: Id<"projects">}) => {
                     e.stopPropagation()
                     e.preventDefault()
                     setIsActive(true)
-                    // set isCreating to true 
+                    setCreating("folder")
                    }}
                    variant="highlight"
                    size="icon-xs-custom"
@@ -92,7 +94,7 @@ const FileExplorer = ({ projectId }: { projectId: Id<"projects">}) => {
                 </div>
             </div>
 
-            {isActive && (
+            {creating && (
                 <CreateInput 
                  type={creating}
                  level={0}

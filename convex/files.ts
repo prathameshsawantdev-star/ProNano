@@ -108,7 +108,7 @@ export const createFile = mutation({
 
         const existingFile = files.find((f => f.type === "file" && f.name === args.name))
 
-        if (!existingFile){
+        if (existingFile){
             throw new Error("File already exist")
         }
 
@@ -153,7 +153,7 @@ export const createFolder = mutation({
 
         const existing = files.find((f => f.type === "folder" && f.name === args.name))
 
-        if (!existing){
+        if (existing){
             throw new Error("File already exist")
         }
 
