@@ -65,7 +65,7 @@ const Navbar = ({ projectId }: { projectId: Id<"projects">}) => {
                             <Link href="/">
                                 <Image src="/logo.svg" alt="Polaris" width={20} height={20} />
                                 <span className={cn("text-sm font-medium", font.className)}>
-                                    Polaris
+                                    Pronano
                                 </span>
                             </Link>
                         </Button>
