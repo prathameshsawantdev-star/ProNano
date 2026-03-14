@@ -9,7 +9,7 @@ import "allotment/dist/style.css"
 
 interface ProjectIdLayoutProps {
     children: ReactNode,
-    projectId: Id<"projects">,
+    projectId: Id<"projects">
 }
 
 const MIN_SIDEBAR_WIDTH = 200
@@ -18,6 +18,7 @@ const DEFAULT_CONVERSATION_SIDEBAR_WIDTH = 400
 const DEFAULT_MAIN_SIZE = 1000
 
 const ProjectIdLayout = ({ children, projectId }: ProjectIdLayoutProps) => {
+  console.log("Sending ID to Convex:", projectId, typeof projectId);
   return (
     <div className="h-screen w-full flex flex-col">
         <Navbar projectId={projectId} />
