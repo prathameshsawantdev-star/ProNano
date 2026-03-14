@@ -73,7 +73,7 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
             return;
         }
 
-        const shouldPin = pinned && previewTabId === "fileId";
+        const shouldPin = pinned && previewTabId === fileId;
         tabs.set(projectId, {
             ...state,
             activeTabId: fileId,

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { FaGithub } from 'react-icons/fa'
 import { Allotment } from 'allotment'
 import FileExplorer from './file-explorer'
+import EditorView from '@/features/editor/components/editor-view'
 
 const Tab = ({
     label,
@@ -69,7 +70,7 @@ const ProjectIdView = ({ projectId }: { projectId: Id<"projects">}) => {
                      <FileExplorer projectId={projectId as Id<"projects">} />
                     </Allotment.Pane>
                     <Allotment.Pane>
-                        Editor View 
+                        <EditorView projectId={projectId as Id<"projects">} />
                     </Allotment.Pane>
                    </Allotment>
                 </div>

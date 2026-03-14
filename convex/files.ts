@@ -2,7 +2,7 @@
 import { mutation, query } from "./_generated/server";
 import { verifyAuth } from "./auth";
 
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { v } from "convex/values";
 
 export const getProjectFiles = query({
@@ -80,6 +80,43 @@ export const getFolderFiles = query({
 
             return a.name.localeCompare(b.name);
         })
+    }
+})
+
+export const getFilePath = query({
+    args: {
+        fileId: v.id("files")
+    },
+    handler: async (ctx, args) => {
+        const identity = await verifyAuth(ctx);
+
+        const file = await ctx.db.get("files", args.fileId)
+
+        if (!file) throw new Error("File doesn't exists")
+
+        const project = await ctx.db.get("projects", file.projectId)
+
+        if(!project) {
+            throw new Error("Project doesn't exist")
+        }
+
+        if (project.ownerId !== identity.subject){
+            throw new Error("You are not authorized to access this project")
+        }
+
+        const path: {_id: Id<"files">, name: string}[] = []
+        let currentId: Id<"files"> | undefined = args.fileId;
+
+        while(currentId){
+            const file = await ctx.db.get("files", currentId) as Doc<"files"> | undefined;
+            if (!file) break;
+
+            path.unshift({ _id: file._id, name: file.name })
+            currentId = file.parentId;
+        }
+
+        return path;
+        return 
     }
 })
 

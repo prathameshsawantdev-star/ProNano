@@ -1,3 +1,5 @@
+"use client"
+
 import { useCallback } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { lastDayOfQuarter } from "date-fns";
