@@ -7,6 +7,7 @@ import { ChevronRightIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import LoadingRow from './loading-row'
 import CreateInput from './create-input'
+import RenameInput from './rename-input'
 
 const Tree = ({
     item,
@@ -45,7 +46,20 @@ const Tree = ({
 
     if(item.type === "file") {
       const filename = item.name 
-      return <TreeContextMenuWrapper item={item} level={level} isActive={false} onClick={() => {}} onDoubleClick={() => {}} 
+
+       if (isRenaming){
+        return (
+          <RenameInput
+          isOpen={isRenaming} 
+           type="file"
+           defaultValue={filename}
+           level={level}
+           onSubmit={handleRename}
+           onCancel={() => setIsRenaming(false)}
+          />
+        )
+      }
+      return <TreeContextMenuWrapper item={item} level={level} isActive={false} onClick={() => {}} onDoubleClick={() => setIsRenaming(true)} 
       onRename={ () => setIsRenaming(true)}
       onDelete={() => {
         deleteFile({ 
@@ -59,6 +73,8 @@ const Tree = ({
     }
     if(item.type === "folder") {
       const folderName = item.name 
+
+     
 
       const folderRender = (
         <>
@@ -78,6 +94,30 @@ const Tree = ({
       const startCreating = (type: "file" | "folder") => {
         setIsOpen(true)
         setIsCreating(type)
+      }
+
+       if (isRenaming){
+        return (
+          <>
+            {(folderContents === undefined) && <LoadingRow level={level+1} />}
+            <RenameInput
+            isOpen={isRenaming} 
+            type="folder"
+            defaultValue={folderName}
+            level={level}
+            onSubmit={handleRename}
+            onCancel={() => setIsRenaming(false)}
+            />
+             {folderContents?.map(subitem => (
+              <Tree
+               key={subitem._id}
+               item={subitem}
+               level={level+1}
+               projectId={projectId}
+              />
+            ))}
+          </>
+        )
       }
 
       if(creating) {
@@ -134,7 +174,7 @@ const Tree = ({
       return(
         <>
           <TreeContextMenuWrapper
-           item={item} level={level} isActive={false} onClick={() => {setIsOpen(s => !s)}} onDoubleClick={() => {}} 
+           item={item} level={level} isActive={false} onClick={() => {setIsOpen(s => !s)}} onDoubleClick={() => setIsRenaming(true)} 
           onRename={ () => setIsRenaming(true)}
           onDelete={() => {
             deleteFile({ 
