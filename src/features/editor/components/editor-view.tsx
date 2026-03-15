@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Id } from '../../../../convex/_generated/dataModel'
 import TopNavigation from './top-navigation'
 import { useEditor } from '../hooks/use-editor'
@@ -18,6 +18,14 @@ const EditorView = ({ projectId }: {projectId: Id<"projects">}) => {
 
   const isActiveFileBinary = activeFile && activeFile.storageId;
   const isActiveFileText = activeFile && !activeFile.storageId
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current){
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [activeTabId])
   return (
     <div className='flex flex-col h-full'>
       <div className="flex items-center">

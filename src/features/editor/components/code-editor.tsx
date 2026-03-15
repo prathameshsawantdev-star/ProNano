@@ -9,6 +9,7 @@ import { indentWithTab } from "@codemirror/commands"
 import { minimap } from '../extensions/minimap'
 import { Extension } from "@codemirror/state"
 import { indentationMarkers } from "@replit/codemirror-indentation-markers"
+import { customSetup } from '../extensions/custom-setup'
 
 interface CodeEditorProps {
     fileName: string,
@@ -27,7 +28,7 @@ const CodeEditor = ({ fileName, initialValue, onChange }: CodeEditorProps) => {
         doc: initialValue,
         parent: editorRef.current!,
         extensions: [
-            basicSetup,
+            customSetup,
             languageExtension,
             keymap.of([indentWithTab]),
             oneDark,
