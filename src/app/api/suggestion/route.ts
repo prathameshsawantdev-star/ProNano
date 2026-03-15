@@ -6,7 +6,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { OpenAI } from "openai"
 
 const groqClient = new OpenAI({
-    apiKey: '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',
+    apiKey: process.env.GROQ_API_KEY,
     baseURL: "https://api.groq.com/openai/v1",
 });
 
