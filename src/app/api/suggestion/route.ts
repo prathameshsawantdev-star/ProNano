@@ -12,13 +12,7 @@ const groqClient = new OpenAI({
 
 
 const google = createGoogleGenerativeAI({
-  apiKey: 'AIzaSyAuphBIdN7rggkTqy_xKgcNkY_9fVsGFq0',
-});
-
-import { createXai } from '@ai-sdk/xai';
-
-const xai = createXai({
-  apiKey: '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',
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
 const suggestionSchema = z.object({
