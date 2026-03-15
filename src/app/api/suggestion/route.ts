@@ -11,11 +11,6 @@ const groqClient = new OpenAI({
 });
 
 
-// const google = createGoogleGenerativeAI({
-//   apiKey: 
-// });
-
-
 const suggestionSchema = z.object({
   suggestion: z
     .string()
