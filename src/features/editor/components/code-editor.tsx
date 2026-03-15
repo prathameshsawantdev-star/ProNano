@@ -10,6 +10,7 @@ import { minimap } from '../extensions/minimap'
 import { Extension } from "@codemirror/state"
 import { indentationMarkers } from "@replit/codemirror-indentation-markers"
 import { customSetup } from '../extensions/custom-setup'
+import { suggestions } from '../extensions/suggestions'
 
 interface CodeEditorProps {
     fileName: string,
@@ -30,6 +31,7 @@ const CodeEditor = ({ fileName, initialValue, onChange }: CodeEditorProps) => {
         extensions: [
             customSetup,
             languageExtension,
+            suggestions(fileName),
             keymap.of([indentWithTab]),
             oneDark,
             customTheme,
@@ -39,7 +41,8 @@ const CodeEditor = ({ fileName, initialValue, onChange }: CodeEditorProps) => {
                 if(update.docChanged){
                     onChange(update.state.doc.toString())
                 }
-            })
+            }),
+            
         ]
     })
 
