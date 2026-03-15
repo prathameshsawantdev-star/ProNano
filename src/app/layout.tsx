@@ -6,6 +6,7 @@ import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserBut
 import { dark } from "@clerk/themes";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { Provider } from "./provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,6 +40,7 @@ export default function RootLayout({
         className={`${inter.variable} ${plexMono.variable} antialiased`}
       >
        <Provider>
+        <Toaster />
         {children}
        </Provider>
       </body>
