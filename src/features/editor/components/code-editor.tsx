@@ -11,6 +11,8 @@ import { Extension } from "@codemirror/state"
 import { indentationMarkers } from "@replit/codemirror-indentation-markers"
 import { customSetup } from '../extensions/custom-setup'
 import { suggestions } from '../extensions/suggestions'
+import { quickEdit } from '../extensions/quick-edit'
+import { selectionTooltip } from '../extensions/selection-tooltip'
 
 interface CodeEditorProps {
     fileName: string,
@@ -31,7 +33,9 @@ const CodeEditor = ({ fileName, initialValue, onChange }: CodeEditorProps) => {
         extensions: [
             customSetup,
             languageExtension,
-            suggestions(fileName),
+           // suggestions(fileName),
+            quickEdit(fileName),
+            selectionTooltip(),
             keymap.of([indentWithTab]),
             oneDark,
             customTheme,

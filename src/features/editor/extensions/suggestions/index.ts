@@ -9,7 +9,7 @@ import {
     keymap    
  } from "@codemirror/view"
 import { Extension, StateEffect, StateField } from "@codemirror/state"
-import { fetcher} from "@/features/editor/fetcher";
+import { fetcher} from "./fetcher";
 
 // it is like reducer action
 const setSuggestionEffect = StateEffect.define<string | null>();
