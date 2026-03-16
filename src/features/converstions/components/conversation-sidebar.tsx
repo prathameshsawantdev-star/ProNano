@@ -70,10 +70,22 @@ const ConversationSidebar = ({ projectId }:ConversationSidebarProps) => {
     }
   }
 
+  const handleCancel = async () => {
+    try{
+        await ky.post("/api/message/cancel", {
+            json: {
+                projectId
+            }
+        })
+    }catch{
+        toast("Unable to cancel AI request")
+    }
+  }
+
   const handleSubmit = async(message: PromptInputMessage) => {
     console.log(message);
    if(isProcessing && !message.text){
-    // aawit handleCancel()
+    await handleCancel()
     setInput("")
     return 
    }
@@ -134,10 +146,11 @@ const ConversationSidebar = ({ projectId }:ConversationSidebarProps) => {
                                         <LoaderIcon className='size-4 animate-spin' />
                                         <span className=''>Thinking...</span>
                                     </div>
+                                ) : message.status === "cancelled" ?  (
+                                    <span className='text-muted-foreground italic'>Request cancelled</span>
                                 ) : (
                                     <MessageResponse>{message.content}</MessageResponse>
                                 )}
-
                             </MessageContent>
                             {/* Add action to last AI message */}
                             {message.status === "completed" && message.role === "assistant" && index === (conversationMessages.length ?? 0) - 1 && (

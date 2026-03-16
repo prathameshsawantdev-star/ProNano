@@ -41,6 +41,28 @@ export async function POST(req: Request){
 
         const projectId = conversation.projectId;
 
+        const processingMessages = await convex.query(api.system.getProcessingMessages, {
+                internalKey,
+                 projectId: projectId as Id<"projects">
+            })
+        if(processingMessages.length > 0){
+        await Promise.all(
+            processingMessages.map( async (p) => {
+                await inngest.send({
+                    name: "message/cancel",
+                    data: {
+                        messageId: p._id
+                    }
+                })
+
+                await convex.mutation(api.system.updateMessageStatus, {
+                    internalKey,
+                    messageId: p._id as Id<"messages">,
+                    status: "cancelled"
+                })
+            })
+        )
+        }
         // create user message 
         const userMessageId = await convex.mutation(api.system.createMessage, {
             internalKey: internalKey,
