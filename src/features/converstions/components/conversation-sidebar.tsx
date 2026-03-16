@@ -39,6 +39,7 @@ import { DEFAULT_CONVERSATION_TITLE } from '../../../../convex/constants'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import ky from 'ky'
+import PastConversationDialog from './past-conversation-dialog'
 
 
 interface ConversationSidebarProps {
@@ -54,6 +55,7 @@ const ConversationSidebar = ({ projectId }:ConversationSidebarProps) => {
   const conversationMessages = useMessages(activeConversationId);
 
   const [input, setInput] = useState("")
+  const [pastDialogOpen, setPastDialogOpen] = useState(false)
 
   const isProcessing = conversationMessages?.some((msg) => msg.status === "processing")
   const handleCreateConversation = async() => {
@@ -110,6 +112,13 @@ const ConversationSidebar = ({ projectId }:ConversationSidebarProps) => {
    }
   }
   return (
+    <>
+    <PastConversationDialog 
+     open={pastDialogOpen}
+     onOpenChange={setPastDialogOpen}
+     onSelect={setConversationId}
+     projectId={projectId}
+    />
     <div className='flex flex-col h-full bg-sidebar'>
         <div className='h-8.5 flex items-center justify-between border-b'>
             <div className='text-sm truncate pl-3'>
@@ -119,6 +128,7 @@ const ConversationSidebar = ({ projectId }:ConversationSidebarProps) => {
                 <Button
                     size="icon-xs"
                     variant="highlight"
+                    onClick={() => setPastDialogOpen(true)}
                 >
                     <HistoryIcon className='size-3.5' />
                 </Button>
@@ -195,6 +205,7 @@ const ConversationSidebar = ({ projectId }:ConversationSidebarProps) => {
             </PromptInput>
         </div>
     </div>
+    </>
   )
 }
 

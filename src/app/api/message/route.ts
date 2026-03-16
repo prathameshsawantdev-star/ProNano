@@ -85,7 +85,10 @@ export async function POST(req: Request){
         const event = await inngest.send({
             name: "message/sent",
             data: {
-                messageId: assistantMessageId
+                messageId: assistantMessageId,
+                projectId,
+                conversationId,
+                message
             }
         })
         

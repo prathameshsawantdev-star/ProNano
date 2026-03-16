@@ -36,7 +36,7 @@ export async function POST(req: Request){
             await inngest.send({
                 name: "message/cancel",
                 data: {
-                    messageId: p._id
+                    messageId: p._id,
                 }
             })
 
