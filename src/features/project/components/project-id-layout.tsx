@@ -6,6 +6,7 @@ import Navbar from './project-navbar'
 import { Allotment } from "allotment"
 
 import "allotment/dist/style.css"
+import ConversationSidebar from '@/features/converstions/components/conversation-sidebar'
 
 interface ProjectIdLayoutProps {
     children: ReactNode,
@@ -33,7 +34,7 @@ const ProjectIdLayout = ({ children, projectId }: ProjectIdLayoutProps) => {
               maxSize={MAX_SIDEBAR_WIDTH}
               preferredSize={DEFAULT_MAIN_SIZE}
             >
-              Conversation
+              <ConversationSidebar projectId={projectId} />
             </Allotment.Pane>
             <Allotment.Pane>
               {children}
