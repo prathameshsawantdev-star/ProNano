@@ -2,7 +2,7 @@ import { inngest } from "@/inngest/client";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { NonRetriableError } from "inngest";
 import { convex } from "@/lib/convex-client";
-import { api } from "../../../../convex/_generated/api";
+import { api, internal } from "../../../../convex/_generated/api";
 import { random } from "nanoid";
 import { randomInt } from "crypto";
 import { CODING_AGENT_SYSTEM_PROMPT, TITLE_GENERATOR_SYSTEM_PROMPT } from "./constants";
@@ -10,6 +10,12 @@ import { DEFAULT_CONVERSATION_TITLE } from "../constants";
 import { createAgent, createNetwork, gemini } from "@inngest/agent-kit"
 import { createReadFilesTool } from "./tools/readfile";
 import { createListFileTool } from "./tools/listfile";
+import { createUpdateFileTools } from "./tools/updatefile";
+import { createFilesTool } from "./tools/createfiles";
+import { createFolderTool } from "./tools/createfolder";
+import { createRenameFileTools } from "./tools/renamefile";
+import { createDeleteFileTool } from "./tools/deletefiles";
+import { createScrapeUrls } from "./tools/scrape-url";
 
 interface MessageEvent {
     projectId: Id<"projects">,
@@ -140,7 +146,13 @@ export const processMessage = inngest.createFunction(
                 }),
                 tools: [
                     createReadFilesTool({ internalKey }),
-                    createListFileTool({ internalKey, projectId })
+                    createListFileTool({ internalKey, projectId }),
+                    createUpdateFileTools({ internalKey }),
+                    createFilesTool({ internalKey, projectId }),
+                    createFolderTool({ internalKey, projectId }),
+                    createRenameFileTools({ internalKey }),
+                    createDeleteFileTool({ internalKey }),
+                    createScrapeUrls()
                 ]
             });
 

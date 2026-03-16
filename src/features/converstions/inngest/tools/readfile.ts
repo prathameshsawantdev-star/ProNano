@@ -26,7 +26,7 @@ export const createReadFilesTool = ({ internalKey }: ReadFilesToolOptions) => {
     handler: async (params, { step: toolStep }) => {
       const parsed = paramsSchema.safeParse(params);
       if (!parsed.success) {
-        return `Error: ${parsed.error.issues[0].message}`;
+        return `Error: ${parsed.error.issues[0].message}, use list-file tools to get valid fileIds`;
       }
 
       const { fileIds } = parsed.data;
