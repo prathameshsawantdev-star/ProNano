@@ -9,7 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as constants from "../constants.js";
+import type * as constants from "../../src/features/converstions/constants.js";
 import type * as conversation from "../conversation.js";
 import type * as files from "../files.js";
 import type * as projects from "../projects.js";

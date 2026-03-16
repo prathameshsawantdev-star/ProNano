@@ -35,7 +35,7 @@ import {
     useCreateConversation,
     useMessages
 } from "../hooks/use-conversation"
-import { DEFAULT_CONVERSATION_TITLE } from '../../../../convex/constants'
+import { DEFAULT_CONVERSATION_TITLE } from '../constants'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import ky from 'ky'

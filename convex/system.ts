@@ -165,7 +165,7 @@ export const getFileById = query({
     handler: async(ctx, args) => {
         validateInternalKey(args.internalKey)
 
-        await ctx.db.get(args.fileId)
+        return await ctx.db.get("files", args.fileId)
     }
 })
 
