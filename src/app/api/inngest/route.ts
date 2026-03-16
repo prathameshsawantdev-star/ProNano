@@ -1,3 +1,4 @@
+import { processMessage } from "@/features/converstions/inngest/process-message";
 import { inngest } from "@/inngest/client";
 import { generateTextFn, helloWorld, inngestErrorFn } from "@/inngest/functions";
 import { serve } from "inngest/next";
@@ -8,6 +9,7 @@ export const { GET, POST, PUT } = serve({
   functions: [
     helloWorld, 
     generateTextFn,
-    inngestErrorFn
+    inngestErrorFn,
+    processMessage
   ],
 });
