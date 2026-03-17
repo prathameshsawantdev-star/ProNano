@@ -12,24 +12,17 @@ interface CreateFolderProps {
 }
 
 const paramsSchema = z.object({
-    parentId: z.string(),
     name: z.string(),
-    
 })
 
-export const createFolderTool = ({internalKey, projectId}:CreateFolderProps) => {
+export const createFolderinRootTool = ({internalKey, projectId}:CreateFolderProps) => {
     return createTool({
-        name: "create-folder",
+        name: "create-folder-in-root-folder",
           description:
-      "Use this tool to create new Folder in a folder which id given as parentId",
+      "Use this tool to create new Folder in root",
       
        parameters: z.object({
       name: z.string().describe("The name of the folder to create"),
-      parentId: z
-        .string()
-        .describe(
-          "The ID (not name!) of the parent folder from listFiles, or empty string for root level"
-        ),
     }),
     handler: async(params, { step: toolStep }) => {
         const parsed = paramsSchema.safeParse(params)
@@ -38,26 +31,14 @@ export const createFolderTool = ({internalKey, projectId}:CreateFolderProps) => 
         return `Error: ${parsed.error.issues[0].message}`;
         }
 
-        const { parentId, name } = parsed.data;
+        const { name } = parsed.data;
 
-        return await toolStep?.run("create-folder", async() => {
+        return await toolStep?.run("create-folder-in-root-folder", async() => {
             try{
             // make sure parent folder exist
-            let resolvedParentId: Id<"files"> | undefined;
-            if(parentId && parentId !== ""){
-                resolvedParentId = parentId as Id<"files">
-                const parentFolder = await convex.query(api.system.getFileById, {
-                    internalKey,
-                    fileId: resolvedParentId as Id<"files">
-                })
-
-                if(!parentFolder || parentFolder.type !== "folder"){
-                    return `Error parent folder with Id:${resolvedParentId} not found, or it is not a folder`
-                }
-            }
+           
 
             const folderId = await convex.mutation(api.system.createFolder, {
-                parentId: parentId as Id<"files">,
                 name,
                 projectId: projectId as Id<"projects">,
                 internalKey

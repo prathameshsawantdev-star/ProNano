@@ -17,26 +17,21 @@ const paramsSchema = z.object({
     .array(
       z.object({
         name: z.string().min(1, "File name cannot be empty"),
-        content: z.string(),
+        content: z.string().describe("The file content")
       })
     )
     .min(1, "Provide at least one file to create"),
 });
 
-export const createCreateFilesTool = ({
+export const createCreateRootFilesTool = ({
   projectId,
   internalKey,
 }: CreateFilesToolOptions) => {
   return createTool({
-    name: "createFiles",
+    name: "create-root-files",
     description:
-      "Create multiple files at once in the same folder(not root folder). Use this to batch create files that share the same parent folder. More efficient than creating files one by one.",
+      "You can only create files/folders in root folder using this tool. Use this to batch create files in root folder.",
     parameters: z.object({
-      parentId: z
-        .string()
-        .describe(
-          "The ID of the parent folder. Use empty string for root level. Must be a valid folder ID from listFiles."
-        ),
       files: z
         .array(
           z.object({
@@ -52,41 +47,21 @@ export const createCreateFilesTool = ({
         return `Error: ${parsed.error.issues[0].message}`;
       }
 
-      const { parentId, files } = parsed.data;
+      const { files } = parsed.data;
 
       try {
         return await toolStep?.run("create-files", async () => {
-          let resolvedParentId: Id<"files"> | undefined;
-
-          if (parentId && parentId !== "") {
-            try {
-              resolvedParentId = parentId as Id<"files">;
-              const parentFolder = await convex.query(api.system.getFileById, {
-                internalKey,
-                fileId: resolvedParentId,
-              });
-              if (!parentFolder) {
-                return `Error: Parent folder with ID "${parentId}" not found. Use listFiles to get valid folder IDs.`;
-              }
-              if (parentFolder.type !== "folder") {
-                return `Error: The ID "${parentId}" is a file, not a folder. Use a folder ID as parentId.`;
-              }
-            } catch {
-              return `Error: Invalid parentId "${parentId}". Use listFiles to get valid folder IDs, or use empty string for root level.`;
-            }
-          }
 
           const results = await convex.mutation(api.system.createFiles, {
             internalKey,
             projectId,
-            parentId: resolvedParentId,
-            files,
+            files
           });
 
           const created = results.filter((r) => !r.error);
           const failed = results.filter((r) => r.error);
 
-          let response = `Created ${created.length} file(s)`;
+          let response = `Created  ${created.length} root file(s)`;
           if (created.length > 0) {
             response += `: ${created.map((r) => r.name).join(", ")}`;
           }
