@@ -516,11 +516,13 @@ export const updateExportStatus = mutation({
   args: {
     internalKey: v.string(),
     projectId: v.id("projects"),
-    newStatus: v.union(
+    newStatus: v.optional(
+      v.union(
       v.literal("exporting"),
       v.literal("completed"),
       v.literal("failed"),
       v.literal("cancelled")
+    )
     ),
     repoUrl: v.optional(v.string())
   },
