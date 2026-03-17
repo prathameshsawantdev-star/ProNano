@@ -186,7 +186,7 @@ const ExportGitHubPopover = ({ projectId }: ExportGihubPopoverProps) => {
                         return(
                             <Field data-invalid={isInvalid}>
                                 <FieldLabel htmlFor={field.name}>
-                                    Repository Name
+                                    Description
                                 </FieldLabel>
                                 <Textarea
                                         name={field.name}

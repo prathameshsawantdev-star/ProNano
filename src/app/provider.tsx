@@ -7,11 +7,14 @@ import { ClerkProvider, SignInButton, SignOutButton, SignUpButton, useAuth } fro
 import { Authenticated, AuthLoading, ConvexReactClient, Unauthenticated } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
+// https://first-grub-40.clerk.accounts.dev/.well-known/jwks.js
+// https://first-grub-40.clerk.accounts.dev
+
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export const Provider = ({ children }: { children: React.ReactNode }) => {
     return(
-        <ClerkProvider>
+        <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}>
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                <ThemeProvider
         attribute="class"

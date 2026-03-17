@@ -7,8 +7,8 @@ import { FaGithub } from 'react-icons/fa'
 import { Allotment } from 'allotment'
 import FileExplorer from './file-explorer'
 import EditorView from '@/features/editor/components/editor-view'
-import PreviewView from '@/features/preview/components/preview-view'
 import ExportGitHubPopover from './export-github-popover'
+import { PreviewView } from '@/features/preview/components/preview-view'
 
 const Tab = ({
     label,

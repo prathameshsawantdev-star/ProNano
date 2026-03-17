@@ -4,6 +4,23 @@ import { verifyAuth } from "./auth";
 import { verify } from "crypto";
 import { auth } from "@clerk/nextjs/server";
 
+export const updateOwnerToIdentitySubject = mutation({
+    args: {
+        projectId: v.id("projects")
+    },
+    handler: async(ctx, args) => {
+         const identity = await verifyAuth(ctx);
+        if(!identity) {
+            throw new Error("User not Authorized")
+        }
+
+        await ctx.db.patch("projects", args.projectId, {
+            ownerId: identity.subject,
+            updatedAt: Date.now()
+        })
+    }
+})
+
 export const create = mutation({
       args: {
         name: v.string(),
@@ -53,8 +70,9 @@ export const getById = query({
         if(!project) {
             throw new Error("Project not found")
         }
-
-        if(project!.ownerId !== identity.subject) {
+        console.log("identity.subject", identity.subject)
+        console.log("project.ownerId", project.ownerId)
+        if(project.ownerId !== identity.subject) {
             throw new Error("Unauthorized project access!")
         }
 

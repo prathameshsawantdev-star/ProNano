@@ -22,11 +22,15 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { auth } from "@clerk/nextjs/server";
+import { mutation } from "../../../../convex/_generated/server";
+import { useUpdateIdentity } from "../hooks/use-project";
+
 
 const ImportGithubDialog = ({ open, onOpenChange }: ImportGihubDialoProps) => {
   const router = useRouter()
   const { openUserProfile } =  useClerk()
-
+    const updateIdentity = useUpdateIdentity()
   const form = useForm({
     defaultValues: {
         url: ""
@@ -39,10 +43,12 @@ const ImportGithubDialog = ({ open, onOpenChange }: ImportGihubDialoProps) => {
         console.log(value.url)
         const { projectId } = await ky.post("/api/github/import", {
             json: {
-                url: value.url 
+                url: value.url,
+
             }
         }).json<{ success: boolean, projectId: Id<"projects">, eventId: string}>()
 
+        updateIdentity({ projectId: projectId as Id<"projects">})
         toast.success("Importing repository...")
         onOpenChange(false)
         form.reset()

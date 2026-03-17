@@ -23,3 +23,11 @@ export const useProject = ({ projectId }: { projectId: Id<"projects"> }) => {
 export const useRenameProject = ({ projectId }: { projectId: Id<"projects"> }) => {
     return useMutation(api.projects.rename)
 }
+
+export const useUpdateIdentity = () => {
+    return useMutation(api.projects.updateOwnerToIdentitySubject)
+}
+
+export const useUpdateProjectSettings = () => {
+  return useMutation(api.projects.updateSettings);
+};

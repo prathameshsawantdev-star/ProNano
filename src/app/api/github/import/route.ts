@@ -1,14 +1,15 @@
 
 import { convex } from "@/lib/convex-client";
-import { auth, clerkClient, createClerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient} from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import z from "zod";
 import { api } from "../../../../../convex/_generated/api";
 import { inngest } from "@/inngest/client";
 import { Id } from "../../../../../convex/_generated/dataModel";
+import { useUpdateIdentity } from "@/features/project/hooks/use-project";
 
 const requestSchema = z.object({
-    url: z.string()
+    url: z.string(),
 })
 
 function parseGitHubUrl(url: string) {
@@ -29,7 +30,7 @@ export async function POST (req: Response){
   }
 
   const body = await req.json()
-  const { url } = requestSchema.parse(body)
+  const { url} = requestSchema.parse(body)
 
   const { owner, repo } = parseGitHubUrl(url)
 
@@ -69,7 +70,10 @@ export async function POST (req: Response){
     }
   })
 
+
+
   return NextResponse.json({
+    projectId: projectId as Id<"projects">,
     success: true,
     eventId: event.ids[0]
   })

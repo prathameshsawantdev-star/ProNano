@@ -1,138 +1,157 @@
-"use client"
-import z from "zod"
-import { Doc, Id } from "../../../../convex/_generated/dataModel"
-import { use, useState } from "react"
-import { convex } from "@/lib/convex-client"
-import { api } from "../../../../convex/_generated/api"
-import { useForm } from "@tanstack/react-form"
-import { useMutation } from "convex/react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { SettingsIcon } from "lucide-react"
-import { FormField } from "@/components/ui/form"
-import { Field, FieldLabel, FieldDescription } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+"use client";
 
- 
+import { z } from "zod";
+import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import { SettingsIcon } from "lucide-react";
+
+
+
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";
+
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
+import { useUpdateProjectSettings } from "@/features/project/hooks/use-project";
 
 const formSchema = z.object({
-    installCommand: z.string(),
-    devCommand: z.string()
-})
+  installCommand: z.string(),
+  devCommand: z.string(),
+});
 
-interface PreviewPopoverSettignsProps {
-    projectId: Id<"projects">,
-    initialValues: Doc<"projects">["settings"],
-    onSave?: () => void 
-}
+interface PreviewSettingsPopoverProps {
+  projectId: Id<"projects">;
+  initialValues?: Doc<"projects">["settings"];
+  onSave?: () => void;
+};
 
-export const PreviewPopover = ({ projectId, initialValues, onSave }: PreviewPopoverSettignsProps) => {
-    
-    const [open, setOpen] = useState(false)
-    const updateSettings = useMutation(api.projects.updateSettings);
+export const PreviewSettingsPopover = ({
+  projectId,
+  initialValues,
+  onSave,
+}: PreviewSettingsPopoverProps) => {
+  const [open, setOpen] = useState(false);
+  const updateSettings = useUpdateProjectSettings();
 
-
-    const form = useForm({
-        defaultValues: {
-            installCommand: initialValues?.installCommand ?? "",
-            devCommand: initialValues?.devCommand ?? ""
+  const form = useForm({
+    defaultValues: {
+      installCommand: initialValues?.installCommand ?? "",
+      devCommand: initialValues?.devCommand ?? "",
+    },
+    validators: {
+      onSubmit: formSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await updateSettings({
+        projectId: projectId,
+        settings: {
+          installCommand: value.installCommand || undefined,
+          devCommand: value.devCommand || undefined,
         },
-        validators: {
-            onSubmit: formSchema
-        },
-        onSubmit: async ({ value }) => {
-             await updateSettings({
-                settings: {
-                    installCommand: value.installCommand ?? undefined,
-                    devCommand: value.devCommand ?? undefined
-                },
-                projectId: projectId as Id<"projects">
-             })
-             setOpen(false)
-             onSave?.()
-        }
-    })
-
-    const handleOpenChange = (isOpen: boolean) => {
-        if(isOpen){
-            form.reset({
-                installCommand: initialValues?.installCommand ?? "",
-                devCommand: initialValues?.devCommand ?? ""
-            })
-        }
-
-        setOpen(false)
+      });
+      setOpen(false);
+      onSave?.();
     }
-    return(
-        <Popover open={open} onOpenChange={handleOpenChange}>
-            <PopoverTrigger asChild>
-                <Button className="h-full rounded-none" title="Preview Settings" size="sm" variant="ghost">
-                    <SettingsIcon className="size-3" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 align-end">
-                <form
-                    onSubmit={
-                      (e) => {
-                        e.preventDefault()
-                        form.handleSubmit()
-                      }
-                    }
+  });
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen) {
+      form.reset({
+        installCommand: initialValues?.installCommand ?? "",
+        devCommand: initialValues?.devCommand ?? "",
+      });
+    }
+    setOpen(isOpen);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-full rounded-none"
+          title="Preview settings"
+        >
+          <SettingsIcon className="size-3" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80" align="end">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+        >
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm">
+                Preview Settings
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                Configure how your project runs in the preview.
+              </p>
+            </div>
+            <form.Field name="installCommand">
+              {(field) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>
+                    Install Command
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="npm install"
+                  />
+                  <FieldDescription>
+                    Command to install dependencies
+                  </FieldDescription>
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="devCommand">
+              {(field) => (
+                <Field>
+                  <FieldLabel htmlFor={field.name}>Start Command</FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="npm run dev"
+                  />
+                  <FieldDescription>
+                    Command to start the development server
+                  </FieldDescription>
+                </Field>
+              )}
+            </form.Field>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+            >
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="w-full"
+                  disabled={!canSubmit || isSubmitting}
                 >
-                <div className="space-y-4">
-                    <div className="space-y-1">
-                        <h4 className="font-medium text-sm">Preview Settings</h4>
-                        <p className="text-xs text-muted-foreground">Configure how your project runs in the preview</p>
-                    </div>
-                    <form.Field name="installCommand">
-                        {(field) => (
-                            <Field>
-                                <FieldLabel htmlFor={field.name}>Install Command</FieldLabel>
-                                <Input 
-                                 id={field.name}
-                                 value={field.state.value}
-                                 name={field.name}
-                                 onChange={e => field.setValue(e.target.value)}
-                                 onBlur={field.handleBlur}
-                                 placeholder="npm install"
-                                />
-                                <FieldDescription>
-                                    Command to Install dependencies
-                                </FieldDescription>
-                            </Field>
-                        )}
-                    </form.Field>
-                    <form.Field name="devCommand">
-                        {(field) => (
-                            <Field>
-                                <FieldLabel htmlFor={field.name}>dev Command</FieldLabel>
-                                <Input 
-                                 id={field.name}
-                                 value={field.state.value}
-                                 name={field.name}
-                                 onChange={e => field.setValue(e.target.value)}
-                                 onBlur={field.handleBlur}
-                                 placeholder="npm run dev"
-                                />
-                                <FieldDescription>Command to start dev environment</FieldDescription>
-                            </Field>
-                        )}
-                    </form.Field>
-                    <form.Subscribe selector={(state) => ([state.canSubmit, state.isSubmitting])}>
-                        {([canSubmit, isSubmitting]) => (
-                            <Button
-                             type="submit"
-                             disabled={!canSubmit || isSubmitting} 
-                             size="sm"
-                             className="w-full"
-                            >
-                                {isSubmitting ? "Saving..." : "Save Changes" }
-                            </Button>
-                        )}
-                    </form.Subscribe>
-                </div>
-                </form>
-            </PopoverContent>
-        </Popover>
-    )
-}
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </Button>
+              )}
+            </form.Subscribe>
+          </div>
+        </form>
+      </PopoverContent>
+    </Popover>
+  );
+};

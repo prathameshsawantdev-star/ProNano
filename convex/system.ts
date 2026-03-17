@@ -207,11 +207,11 @@ export const createFile = mutation({
   },
   handler: async (ctx, args) => {
     validateInternalKey(args.internalKey);
-
+ const parentId = (args.parentId && args.parentId !== "") ? args.parentId : undefined 
     const files = await ctx.db
       .query("files")
       .withIndex("by_project_parent", (q) =>
-        q.eq("projectId", args.projectId).eq("parentId", args.parentId)
+        q.eq("projectId", args.projectId).eq("parentId", parentId)
       )
       .collect();
 
@@ -228,7 +228,7 @@ export const createFile = mutation({
       name: args.name,
       content: args.content,
       type: "file",
-      parentId: args.parentId,
+      parentId: parentId,
       updatedAt: Date.now(),
     });
 
@@ -251,11 +251,11 @@ export const createFiles = mutation({
   },
   handler: async (ctx, args) => {
     validateInternalKey(args.internalKey);
-
+     const parentId = (args.parentId && args.parentId !== "") ? args.parentId : undefined 
     const existingFiles = await ctx.db
       .query("files")
       .withIndex("by_project_parent", (q) =>
-        q.eq("projectId", args.projectId).eq("parentId", args.parentId)
+        q.eq("projectId", args.projectId).eq("parentId", parentId)
       )
       .collect();
 
@@ -280,7 +280,7 @@ export const createFiles = mutation({
         name: file.name,
         content: file.content,
         type: "file",
-        parentId: args.parentId,
+        parentId: parentId,
         updatedAt: Date.now(),
       });
 
@@ -301,11 +301,12 @@ export const createFolder = mutation({
   },
   handler: async (ctx, args) => {
     validateInternalKey(args.internalKey);
+    const parentId = (args.parentId && args.parentId !== "") ? args.parentId : undefined 
 
     const files = await ctx.db
       .query("files")
       .withIndex("by_project_parent", (q) =>
-        q.eq("projectId", args.projectId).eq("parentId", args.parentId)
+        q.eq("projectId", args.projectId).eq("parentId", parentId)
       )
       .collect();
 
@@ -321,7 +322,7 @@ export const createFolder = mutation({
       projectId: args.projectId,
       name: args.name,
       type: "folder",
-      parentId: args.parentId,
+      parentId: parentId,
       updatedAt: Date.now(),
     });
 
@@ -338,6 +339,7 @@ export const renameFile = mutation({
   },
   handler: async (ctx, args) => {
     validateInternalKey(args.internalKey);
+    
 
     const file = await ctx.db.get(args.fileId);
     if (!file) {
