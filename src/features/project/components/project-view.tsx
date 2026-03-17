@@ -13,6 +13,7 @@ import { uniqueNamesGenerator, adjectives, animals, colors } from "unique-names-
 import { useProjectsCreate } from "../hooks/use-project";
 import { useEffect, useState } from "react";
 import ProjectsCommandDialog from "./project-command-dialog";
+import ImportGithubDialog from "./import-github-dialog";
 
 const font = Poppins({
     subsets: ["latin"],
@@ -22,6 +23,7 @@ const font = Poppins({
 const ProjectView = () => {
     const createProject = useProjectsCreate();
     const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -38,9 +40,25 @@ const ProjectView = () => {
             document.removeEventListener("keydown", handleKeyDown);
         }
     }, [])
+
+     useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if(e.metaKey || e.ctrlKey){
+            e.preventDefault()
+             if(e.key === "i"){
+            setIsImportDialogOpen(true)
+            }
+        }
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+        removeEventListener("keydown", handleKeyDown)
+    }
+  })
     return(
         <>
         <ProjectsCommandDialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen} />
+        <ImportGithubDialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen} />
         <div className="min-h-screen bg-sidebar flex flex-col justify-center items-center p-6 md:p-16">
             <div className="max-w-sm w-full mx-auto flex flex-col gap-4">
                 <div className="w-full flex gap-4 items-center">
@@ -75,7 +93,9 @@ const ProjectView = () => {
                                 </span>
                             </div>
                         </Button>
-                         <Button variant="outline" className="h-full w-full text-white p-4 flex flex-col justify-start items-start gap-6 bg-background rounded-none">
+                         <Button
+                         onClick={() => setIsImportDialogOpen(true)}
+                         variant="outline" className="h-full w-full text-white p-4 flex flex-col justify-start items-start gap-6 bg-background rounded-none">
                             <div className="flex items-center justify-between w-full text-white">
                                 <FaGithub className="size-4" />
                                 <Kbd className="bg-accent border">

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Id } from '../../../../convex/_generated/dataModel'
 import { cn } from '@/lib/utils'
 import { FaGithub } from 'react-icons/fa'
@@ -8,6 +8,7 @@ import { Allotment } from 'allotment'
 import FileExplorer from './file-explorer'
 import EditorView from '@/features/editor/components/editor-view'
 import PreviewView from '@/features/preview/components/preview-view'
+import ExportGitHubPopover from './export-github-popover'
 
 const Tab = ({
     label,
@@ -36,7 +37,8 @@ const DEFAULT_MAIN_SIZE = 1000
 const DEFAULT_SIDEBAR_WIDTH = 350
 
 const ProjectIdView = ({ projectId }: { projectId: Id<"projects">}) => {
-  const [activeView, setActiveView] = useState<"editor" | "preview">("editor");
+  const [activeView, setActiveView] = useState<"editor" | "preview">("editor"); 
+ 
   return (
     <div className='flex flex-col h-full'>
         <nav className='h-8.75 flex items-center bg-sidebar border-b'>
@@ -50,12 +52,9 @@ const ProjectIdView = ({ projectId }: { projectId: Id<"projects">}) => {
                 isActive={activeView === "preview"}
                 onClick={() => setActiveView("preview")}
             />
-            <div className='h-full flex flex-1 justify-end'>
-                <div className="h-full px-3 flex items-center gap-2 hover:bg-accent/30 text-muted-foreground border-r cursor-pointer">
-                    <FaGithub className='size-3.5' />
-                    <span>Export</span>
-                </div>
-            </div>
+           <ExportGitHubPopover 
+            projectId={projectId}
+           />
         </nav>
         <div className='flex-1 relative'>
                 <div className={cn("absolute inset-0", activeView === "editor" ? "visible" : "hidden")}>

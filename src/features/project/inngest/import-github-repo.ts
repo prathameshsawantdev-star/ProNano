@@ -1,6 +1,6 @@
 import { inngest } from "@/inngest/client";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { NonRetriableError, step } from "inngest";
+import { NonRetriableError } from "inngest";
 import { convex } from "@/lib/convex-client";
 import { api } from "../../../../convex/_generated/api";
 import { Octokit } from "octokit"
