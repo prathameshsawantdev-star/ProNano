@@ -2,6 +2,7 @@ import { convexToJson, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { verifyAuth } from "./auth";
 import { verify } from "crypto";
+import { auth } from "@clerk/nextjs/server";
 
 export const create = mutation({
       args: {
@@ -81,6 +82,38 @@ export const rename = mutation({
 
         await ctx.db.patch("projects", args.id, {
             name: args.name,
+            updatedAt: Date.now()
+        })
+    }
+})
+
+const updateSettings = mutation({
+    args: {
+        projectId: v.id("projects"),
+        settings: v.optional(
+            v.object({
+                installCommand: v.optional(v.string()),
+                devCommand: v.optional(v.string())
+            })
+        )
+    },
+    handler: async(ctx, args) => {
+        const identity = await verifyAuth(ctx)
+        if(!identity.subject) {
+            throw new Error("Unauthorized")
+        }
+
+        const project = await ctx.db.get("projects", args.projectId)
+        if(!project){
+            throw new Error("Project doesn't exist!")
+        }
+
+        if(project.ownerId !== identity.subject){
+            throw new Error("You are not authorized to access this project")
+        }
+
+        await ctx.db.patch("projects", args.projectId, {
+            settings: args.settings,
             updatedAt: Date.now()
         })
     }
