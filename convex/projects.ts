@@ -87,7 +87,7 @@ export const rename = mutation({
     }
 })
 
-const updateSettings = mutation({
+export const updateSettings = mutation({
     args: {
         projectId: v.id("projects"),
         settings: v.optional(

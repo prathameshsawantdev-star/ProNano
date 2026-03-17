@@ -7,6 +7,7 @@ import { FaGithub } from 'react-icons/fa'
 import { Allotment } from 'allotment'
 import FileExplorer from './file-explorer'
 import EditorView from '@/features/editor/components/editor-view'
+import PreviewView from '@/features/preview/components/preview-view'
 
 const Tab = ({
     label,
@@ -75,7 +76,7 @@ const ProjectIdView = ({ projectId }: { projectId: Id<"projects">}) => {
                    </Allotment>
                 </div>
                  <div className={cn("absolute inset-0", activeView === "preview" ? "visible" : "hidden")}>
-                    Preview 
+                    <PreviewView projectId={projectId} />
                 </div>
         </div>
     </div>

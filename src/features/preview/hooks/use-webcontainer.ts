@@ -41,7 +41,7 @@ interface UseWebContainerProps {
     }
 }
 
-export const useWebContainer({ projectId, enabled, settings}:UseWebContainerProps) => {
+export const useWebContainer = ({ projectId, enabled, settings}:UseWebContainerProps) => {
     const [status, setStatus] = useState<"idle" | "booting" | "installing" | "running" | "error">("idle");
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
