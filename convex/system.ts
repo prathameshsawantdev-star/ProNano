@@ -465,7 +465,7 @@ export const createBinaryFile = mutation({
     projectId: v.id("projects"),
     name: v.string(),
     storageId: v.id("_storage"),
-    parentId: v.id("files")
+    parentId: v.optional(v.id("files"))
   },
   handler: async (ctx, args) => {
     validateInternalKey(args.internalKey);
@@ -549,16 +549,16 @@ export const getProjectFilesWithUrls = query({
                         .withIndex("by_project", q => q.eq("projectId", args.projectId))
                         .collect()
 
-    return await Promise.all([
-      files.map((file) => {
+    return await Promise.all(
+      files.map(async (file) => {
         if (file.storageId){
-          const url = ctx.storage.getUrl(file.storageId)
-          return {...file, url}
+          const url = await ctx.storage.getUrl(file.storageId)
+          return {...file, storageUrl: url }
         }
 
-        return file 
+        return { ...file, storageUrl: null } 
       })
-    ])
+    )
   }
 })
 
